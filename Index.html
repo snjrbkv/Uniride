@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="images/head-logo.png" />
+    <link rel="stylesheet" href="css/style.css" />
+    <title>Uniride</title>
+  </head>
+  <body>
+    <header>
+      <div class="container">
+        <div class="header-in">
+          <a href="Index.html" class="logo">
+            <img src="images/logo.svg" alt="logo" />
+          </a>
+          <nav>
+            <ul class="nav--list">
+              <li class="list--item">
+                <a href="Index.html" class="item--link"> Новинки в TG </a>
+              </li>
+              <li class="list--item">
+                <a href="Index.html" class="item--link"> О нас </a>
+              </li>
+              <li class="list--item">
+                <a href="Index.html" class="item--link"> Для компаний </a>
+              </li>
+            </ul>
+            <a href="#" class="nav-btn"> Найти работу </a>
+          </nav>
+        </div>
+        <div class="search">
+          <img src="images/icons.png" alt="search-icon" class="search--icon" />
+          <input
+            type="text"
+            placeholder="Поиск вакансии..."
+            class="search--input"
+          />
+        </div>
+      </div>
+    </header>
+    <main>
+      <section class="filters container">
+        <div class="filters__block">
+          <h3 class="filters__title">Сфера</h3>
+          <ul class="filters__list">
+            <li>Банки и Финтех</li>
+            <li>ИТ Софт SaaC</li>
+            <li>Ритейл и Маркетплейсы</li>
+            <li>Медиа и Соцсети</li>
+            <li>Искусственный интеллект</li>
+          </ul>
+          <a href="#" class="filters__more">Показать все</a>
+        </div>
+
+        <div class="filters__block">
+          <h3 class="filters__title">Направления</h3>
+          <ul class="filters__list">
+            <li>Продажи</li>
+            <li>Маркетинг</li>
+            <li>Разработка</li>
+            <li>Финансы</li>
+            <li>Реклама и PR</li>
+          </ul>
+          <a href="#" class="filters__more">Показать все</a>
+        </div>
+
+        <div class="filters__block">
+          <h3 class="filters__title">Форма занятости</h3>
+          <ul class="filters__list">
+            <li>Полная / Офис</li>
+            <li>Полная / Удаленно</li>
+            <li>Полная / Гибрид</li>
+            <li>Неполная / Офис</li>
+            <li>Неполная / Удаленно</li>
+          </ul>
+          <a href="#" class="filters__more">Показать все</a>
+        </div>
+
+        <div class="filters__block">
+          <h3 class="filters__title">Регион</h3>
+          <ul class="filters__list">
+            <li>Россия</li>
+            <li>Белоруссия</li>
+            <li>Казахстан</li>
+            <li>Армения</li>
+            <li>Кипр</li>
+          </ul>
+          <a href="#" class="filters__more">Показать все</a>
+        </div>
+      </section>
+      <section class="selected-filters container">
+        <div class="selected-filters__list" id="selectedFilters"></div>
+        <button class="selected-filters__all">
+          <span><img src="images/settings.png" alt="settings" /></span> Все
+          фильтры
+        </button>
+      </section>
+
+      <section class="companies container">
+        <div id="cards-container" class="cards"></div>
+      </section>
+    </main>
+    <script src="js/script.js"></script>
+  </body>
+</html>
