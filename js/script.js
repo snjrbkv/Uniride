@@ -50,7 +50,7 @@ filterItems.forEach((item) => {
 
 // восстанавливаем при старте
 restoreFilters();
-fetch("js/data.json")
+fetch("./js/data.json")
   .then((res) => {
     if (!res.ok) throw new Error("Ошибка загрузки данных");
     return res.json();
