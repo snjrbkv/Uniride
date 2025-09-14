@@ -72,12 +72,14 @@ fetch("./js/data.json")
 
       card.innerHTML = `
         <div class="company-card__logo"></div>
+        <div class="company-card__header">
         <div class="company-card__icon">T</div>
         <h3>${company["Название компании"] || "Компания"}</h3>
-        <div class="company-card__field">💼 ${
+        </div>
+        <div class="company-card__field"> <img src="/images/job.svg" alt="job"/> ${
           company["Сфера"] || "Сфера не указана"
         }</div>
-        <div class="company-card__location">📍 ${
+        <div class="company-card__location"><img src="/images/location.svg" alt="location"/> ${
           company["Локация"] || "Локация не указана"
         }</div>
         <div class="company-card__footer">
@@ -89,15 +91,15 @@ fetch("./js/data.json")
       `;
 
       // вакансии (если есть массив)
-      if (company._nc_m2m_Uniride_Вакансииs?.length) {
-        const jobsList = document.createElement("ul");
-        company._nc_m2m_Uniride_Вакансииs.forEach((job) => {
-          const li = document.createElement("li");
-          li.textContent = `${job["Название вакансии"]} (${job["Зарплата"]})`;
-          jobsList.appendChild(li);
-        });
-        card.appendChild(jobsList);
-      }
+      //   if (company._nc_m2m_Uniride_Вакансииs?.length) {
+      //     const jobsList = document.createElement("ul");
+      //     company._nc_m2m_Uniride_Вакансииs.forEach((job) => {
+      //       const li = document.createElement("li");
+      //       li.textContent = `${job["Название вакансии"]} (${job["Зарплата"]})`;
+      //       jobsList.appendChild(li);
+      //     });
+      //     card.appendChild(jobsList);
+      //   }
 
       container.appendChild(card);
     });

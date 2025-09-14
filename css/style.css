@@ -171,17 +171,20 @@ nav,
 }
 /* companies */
 .cards {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-  gap: 24px;
-  padding: 20px 0;
+  display: flex;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  padding: 33px 0;
+  gap: 20px;
 }
 
 /* Карточка */
 .company-card {
+  width: 32%;
+  height: 620px;
   background: #f7f7f7;
-  border-radius: 16px;
-  padding: 16px;
+  border-radius: 50px;
+  padding: 50px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -191,16 +194,20 @@ nav,
 /* Верхний блок для изображения */
 .company-card__logo {
   background: #fff;
-  border-radius: 12px;
+  border-radius: 40px;
   width: 100%;
-  height: 120px;
+  height: 230px;
   margin-bottom: 12px;
 }
-
+.company-card__header {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 /* Иконка компании (слева) */
 .company-card__icon {
-  width: 32px;
-  height: 32px;
+  width: 50px;
+  height: 50px;
   border-radius: 50%;
   background: #ffda44;
   display: flex;
@@ -212,29 +219,42 @@ nav,
 
 /* Название компании */
 .company-card h3 {
-  font-size: 16px;
+  font-family: Inter;
   font-weight: 600;
-  margin: 0 0 6px 0;
+  font-style: Semi Bold;
+  font-size: 30px;
+  leading-trim: NONE;
+  line-height: 101%;
+  letter-spacing: -5%;
 }
 
 /* Сфера */
-.company-card__field {
+.company-card__field,
+.company-card__location {
+  margin-top: 20px;
+
   font-size: 14px;
   display: flex;
   align-items: center;
-  gap: 6px;
-  margin-bottom: 6px;
-  color: #333;
+  gap: 20px;
+  font-family: Inter;
+  font-weight: 500;
+  font-style: Medium;
+  font-size: 20px;
+  leading-trim: NONE;
+  line-height: 101%;
+  letter-spacing: -5%;
+  color: #191919;
+}
+.company-card__field img,
+.company-card__location img {
+  width: 26px;
+  height: 100%;
+  display: block;
 }
 
 /* Локация */
 .company-card__location {
-  font-size: 14px;
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 12px;
-  color: #555;
 }
 
 /* Нижний блок */
@@ -243,23 +263,33 @@ nav,
   display: flex;
   justify-content: space-between;
   align-items: center;
+  border-radius: 500px;
+  height: 90px;
+  background-color: #fcfcfc;
+  padding: 20px;
 }
 
 .company-card__vacancies {
-  font-size: 13px;
-  color: #999;
+  font-family: Inter;
+  font-weight: 600;
+  font-style: Semi Bold;
+  font-size: 18px;
+  leading-trim: NONE;
+  line-height: 126%;
+  letter-spacing: -4%;
+  color: #b1b1b1;
 }
 
 /* Кнопка */
 .company-card__btn {
-  display: inline-block;
-  padding: 8px 16px;
-  background: #000;
+  width: 192px;
+  height: 48px;
+  background-color: #191919;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   color: #fff;
-  border-radius: 20px;
-  font-size: 14px;
-  text-decoration: none;
-  transition: background 0.2s;
+  border-radius: 500px;
 }
 
 .company-card__btn:hover {
@@ -277,6 +307,9 @@ nav,
   }
   .nav-btn {
     margin-left: 0;
+  }
+  .filters__list li {
+    font-size: 20px;
   }
 }
 @media only screen and (max-width: 840px) {
