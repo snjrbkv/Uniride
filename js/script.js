@@ -271,29 +271,28 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return card;
   }
-
   // -------------------------------
   // Фильтрация + Поиск
-  // -------------------------------
+  // ------
   function applyFilters() {
     const activeFilters = Array.from(selectedFilters.children).map((chip) =>
       chip.dataset.value.toLowerCase()
     );
 
     container.innerHTML = "";
-
     let filteredCompanies = companiesData.slice();
 
-    // фильтрация по чипам (OR)
+    // фильтрация по чипам
     if (activeFilters.length > 0) {
       filteredCompanies = filteredCompanies.filter((company) => {
         const values = [
           company["Название компании"],
           company["Сфера"],
           company["Локация"],
+          company["Направление"],
         ]
           .filter(Boolean)
-          .map((v) => v.toLowerCase());
+          .map((v) => String(v).toLowerCase());
 
         return activeFilters.some((f) => values.some((v) => v.includes(f)));
       });
@@ -302,14 +301,38 @@ document.addEventListener("DOMContentLoaded", () => {
     // фильтрация по поиску
     if (searchQuery) {
       filteredCompanies = filteredCompanies.filter((company) => {
-        const values = [
+        // 1. данные компании
+        const companyValues = [
           company["Название компании"],
           company["Сфера"],
           company["Локация"],
+          company["Направление"],
         ]
           .filter(Boolean)
-          .map((v) => v.toLowerCase());
-        return values.some((v) => v.includes(searchQuery));
+          .map((v) => String(v).toLowerCase());
+
+        // 2. данные вакансий этой компании
+        let vacancyValues = [];
+        if (Array.isArray(company["_nc_m2m_Uniride_Вакансииs"])) {
+          vacancyValues = company["_nc_m2m_Uniride_Вакансииs"]
+            .map((v) => v["Вакансии"])
+            .filter(Boolean)
+            .flatMap((vac) => [
+              vac.Title,
+              vac.Направление,
+              vac.Локация,
+              vac.Регион,
+              vac["О работе"],
+            ])
+            .filter(Boolean)
+            .map((v) => String(v).toLowerCase());
+        }
+
+        // проверяем совпадения в компании или вакансиях
+        return (
+          companyValues.some((v) => v.includes(searchQuery)) ||
+          vacancyValues.some((v) => v.includes(searchQuery))
+        );
       });
     }
 
@@ -324,7 +347,6 @@ document.addEventListener("DOMContentLoaded", () => {
       container.appendChild(createCompanyCard(company))
     );
 
-    // синхронизируем модалку (на случай, если чипы/удаления были изменены)
     syncModalFilters();
   }
 
