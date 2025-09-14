@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Компания</title>
+    <link rel="stylesheet" href="style.css" />
+    <style>
+      /* Небольшие стили для отладки/чтения */
+      body {
+        font-family: Arial, sans-serif;
+        padding: 24px;
+        background: #fafafa;
+        color: #111;
+      }
+      .error {
+        color: #c33;
+      }
+      .company-detail {
+        max-width: 900px;
+        margin: 0 auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+      }
+      .company-cover img {
+        width: 100%;
+        border-radius: 8px;
+        margin-bottom: 12px;
+        object-fit: cover;
+      }
+      .jobs-list li {
+        margin-bottom: 8px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="company-details">Загрузка...</div>
+
+    <script>
+      document.addEventListener("DOMContentLoaded", async () => {
+        const container = document.getElementById("company-details");
+        const params = new URLSearchParams(window.location.search);
+        const idParam = params.get("id");
+
+        if (!idParam) {
+          container.innerHTML =
+            '<p class="error">ID не указан в URL (пример: ?id=1)</p>';
+          return;
+        }
+
+        try {
+          const res = await fetch(
+            "https://bd.uniride.io/data/table_records.txt"
+          );
+          if (!res.ok) throw new Error("HTTP " + res.status);
+          const data = await res.json();
+
+          // Поиск записи: сравниваем как строки, проверяем несколько полей
+          const company = (data.list || []).find((item) => {
+            const val = String(idParam);
+            if (item == null) return false;
+            if (item.Id != null && String(item.Id) === val) return true;
+            if (item.id != null && String(item.id) === val) return true;
+            if (item.recordId != null && String(item.recordId) === val)
+              return true;
+            if (item.ID != null && String(item.ID) === val) return true;
+            return false;
+          });
+
+          if (!company) {
+            container.innerHTML =
+              '<p class="error">Компания с таким ID не найдена.</p>';
+            return;
+          }
+
+          // Если страница компании отключена — показываем сообщение
+          if (company["Активация страницы"] === false) {
+            container.innerHTML =
+              '<p class="error">Страница этой компании отключена.</p>';
+            return;
+          }
+
+          // Рендерим подробную карточку
+          const coverHtml = company["Обложка"]
+            ? `<div class="company-cover"><img src="${company["Обложка"]}" alt="cover"></div>`
+            : "";
+
+          // вакансии (если есть связанный массив)
+          let jobsHtml = "<p>Вакансий нет</p>";
+          const rawVac = company._nc_m2m_Uniride_Вакансииs;
+          if (Array.isArray(rawVac) && rawVac.length) {
+            const jobs = rawVac
+              .map((v) => {
+                const j = v.Вакансии || v["Вакансии"] || v.job || {};
+                const title = j.Title || j["Название вакансии"] || "Вакансия";
+                const salary = j.Ставка || j["Ставка"] || "";
+                const loc = j.Локация || j["Локация"] || j.Регион || "";
+                return `<li><b>${title}</b>${salary ? ` — ${salary}` : ""}${
+                  loc ? ` — ${loc}` : ""
+                }</li>`;
+              })
+              .join("");
+            jobsHtml = `<ul class="jobs-list">${jobs}</ul>`;
+          }
+
+          container.innerHTML = `
+          <div class="company-detail">
+            ${coverHtml}
+            <h1>${company["Название компании"] || "Без названия"}</h1>
+            <p><strong>Сфера:</strong> ${company["Сфера"] || "—"}</p>
+            <p><strong>Локация:</strong> ${company["Локация"] || "—"}</p>
+            <p><strong>Вакансии (число):</strong> ${
+              company["Вакансии"] ?? 0
+            }</p>
+            <h3>Описание (О нас)</h3>
+            <p>${
+              company["О нас (описание)"] ||
+              company["О нас (заголовок)"] ||
+              "Нет описания"
+            }</p>
+
+            <h3>Вакансии</h3>
+            ${jobsHtml}
+
+            <hr/>
+            <p><small>Id записи: <code>${
+              company.Id ?? company.id ?? company.recordId ?? company.ID
+            }</code></small></p>
+          </div>
+        `;
+        } catch (err) {
+          console.error(err);
+          container.innerHTML =
+            '<p class="error">Ошибка загрузки данных. Проверь консоль.</p>';
+        }
+      });
+    </script>
+  </body>
+</html>
