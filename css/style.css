@@ -139,6 +139,9 @@ nav,
   align-items: flex-start;
   justify-content: space-between;
 }
+.selected-filters__container {
+  height: fit-content;
+}
 
 .selected-filters__list {
   display: flex;
@@ -595,7 +598,17 @@ nav,
   .search--input {
     padding: 0 10%;
   }
+  .company-card {
+    width: 280px;
+    height: 140px;
+    border-radius: 30px !important;
+    img,
+    video {
+      border-radius: 30px !important;
+    }
+  }
   .company-card__footer {
+    margin-top: 20px;
     display: flex;
     flex-direction: column;
     gap: 10px;
