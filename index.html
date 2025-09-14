@@ -96,7 +96,85 @@
           фильтры
         </button>
       </section>
+      <section>
+        <!-- Модалка фильтров -->
+        <div id="filtersModal" class="modal">
+          <div class="modal__content">
+            <div class="modal__layout">
+              <!-- Левая колонка -->
+              <div class="modal__sidebar">
+                <button class="modal__tab active" data-target="sphere">
+                  <img src="images/spheres.svg" alt="sphere" />
+                  Сфера
+                </button>
+                <button class="modal__tab" data-target="directions">
+                  <img src="images/directions.svg" alt="directions" />
+                  Направления
+                </button>
+                <button class="modal__tab" data-target="employment">
+                  <img src="images/form.svg" alt="form" />
+                  Форма занятости
+                </button>
+                <button class="modal__tab" data-target="region">
+                  <img src="images/region.svg" alt="region" />
+                  Регион
+                </button>
+              </div>
 
+              <!-- Правая колонка -->
+              <div class="modal__body">
+                <div class="modal__panel active" id="sphere">
+                  <ul>
+                    <li>Банки и Финтех</li>
+                    <li>ИТ Софт SaaS</li>
+                    <li>Ритейл и Маркетплейсы</li>
+                    <li>Медиа и Соцсети</li>
+                    <li>Искусственный интеллект</li>
+                    <li>Транспорт и Логистика</li>
+                    <li>Строительство и Проекты</li>
+                    <li>Здравоохранение и Медтех</li>
+                    <li>Энергетика и Экология</li>
+                    <li>Юридические услуги</li>
+                    <li>Государственный сектор</li>
+                    <li>Образование и EdTech</li>
+                  </ul>
+                </div>
+
+                <div class="modal__panel" id="directions">
+                  <ul>
+                    <li>Продажи</li>
+                    <li>Маркетинг</li>
+                    <li>Разработка</li>
+                    <li>Финансы</li>
+                    <li>Реклама и PR</li>
+                  </ul>
+                </div>
+
+                <div class="modal__panel" id="employment">
+                  <ul>
+                    <li>Полная / Офис</li>
+                    <li>Полная / Удаленно</li>
+                    <li>Полная / Гибрид</li>
+                    <li>Неполная / Офис</li>
+                    <li>Неполная / Удаленно</li>
+                  </ul>
+                </div>
+
+                <div class="modal__panel" id="region">
+                  <ul>
+                    <li>Россия</li>
+                    <li>Белоруссия</li>
+                    <li>Казахстан</li>
+                    <li>Армения</li>
+                    <li>Кипр</li>
+                  </ul>
+                </div>
+              </div>
+              
+            </div>
+          </div>
+        </div>
+      </section>
       <section class="companies container">
         <div id="cards-container" class="cards"></div>
       </section>
