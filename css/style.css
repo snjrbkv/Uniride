@@ -170,6 +170,7 @@ nav,
   min-width: 165px;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 8px;
   border: none;
   background: transparent;
@@ -213,7 +214,7 @@ nav,
   height: 620px;
   background: #f7f7f7;
   border-radius: 50px;
-  padding: 50px;
+  padding: 40px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -221,7 +222,7 @@ nav,
 /* Верхний блок для изображения */
 .company-card__logo {
   background: #ffffff;
-  border-radius: 40px;
+  border-radius: 60px;
   width: 100%;
   height: 230px;
   margin-bottom: 12px;
@@ -229,7 +230,14 @@ nav,
     width: 100%;
     height: 100%;
     object-fit: cover;
-    border-radius: 40px;
+    border-radius: 50px !important;
+    display: block;
+  }
+  video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50px !important;
     display: block;
   }
 }
@@ -242,7 +250,7 @@ nav,
 .company-card__icon {
   width: 50px;
   height: 50px;
-  border-radius: 50%;
+  border-radius: 50% !important;
   background: #b1b1b1;
   display: flex;
   justify-content: center;
@@ -252,7 +260,7 @@ nav,
   img {
     width: 100%;
     height: 100%;
-    border-radius: 50%;
+    border-radius: 50% !important;
   }
 }
 

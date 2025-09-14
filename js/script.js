@@ -252,7 +252,7 @@ document.addEventListener("DOMContentLoaded", () => {
     footer.className = "company-card__footer";
     const vacancies = document.createElement("span");
     vacancies.className = "company-card__vacancies";
-    vacancies.textContent = `${company["Вакансии"] || 0} вакансий`;
+    vacancies.textContent = `${company["Вакансии"] || 0} вакансии`;
 
     const recordId = company.Id ?? company.id ?? company["ID"] ?? "";
     const a = document.createElement("a");
