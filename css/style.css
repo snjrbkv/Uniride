@@ -425,9 +425,14 @@ nav,
   display: none;
 }
 .modal__panel ul {
+  gap: 5px;
+  height: 100% !important;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
 }
 .modal__panel ul > li {
-  height: 40px;
+  height: 36px;
   padding: 8px 16px;
   font-family: Inter;
   font-weight: 500;
@@ -438,13 +443,18 @@ nav,
   letter-spacing: -0.2px;
   vertical-align: middle;
   cursor: pointer;
+  display: flex;
+  align-items: center;
 }
-.modal__panel ul > li:hover,
-.modal__panel ul > li.selected {
+.modal__panel ul > li:hover {
   background: #ffffff14;
-  border-radius: 12px;
+  border-radius: 14px;
 }
 
+.modal__panel ul > li.selected {
+  background: #ffffff24;
+  border-radius: 14px;
+}
 .mobile-filter {
   display: flex;
   align-items: flex-start;
