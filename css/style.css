@@ -444,6 +444,7 @@ nav,
   gap: 20px;
   margin-top: 33px;
   font-family: sans-serif;
+  display: none;
 }
 
 .mobile-filter__list {
@@ -566,6 +567,9 @@ nav,
   }
   .selected-filters__all {
     display: none;
+  }
+  .mobile-filter {
+    display: flex;
   }
 }
 @media only screen and (max-width: 640px) {
