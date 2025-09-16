@@ -1,47 +1,158 @@
 document.addEventListener("DOMContentLoaded", () => {
+  // -------------------------------
+  // DOM элементы
+  // -------------------------------
   const modal = document.getElementById("filtersModal");
   const modalClose = document.querySelector(".modal__close");
   const moreLinks = document.querySelectorAll(".filters__more");
   const allFiltersBtn = document.querySelector(".selected-filters__all");
   const selectedFilters = document.getElementById("selectedFilters");
-  const topFilterItems = document.querySelectorAll(".filters__list li");
+  let topFilterItems = document.querySelectorAll(".filters__list li");
   const modalTabs = document.querySelectorAll(".modal__tab");
   const modalPanels = document.querySelectorAll(".modal__panel");
   const container = document.getElementById("cards-container");
   const searchInput = document.querySelector(".search--input");
+  const filterTitles = document.querySelectorAll(".filters__title");
+  const mobileFilterButtons = document.querySelectorAll(".mobile-filter__item");
+  const mobileAllFilters = document.querySelector(".mobile-filter__all");
 
   let companiesData = [];
   let searchQuery = "";
 
   // -------------------------------
-  // Helpers LocalStorage
+  // Helpers
+  // -------------------------------
+  function normalizeText(str) {
+    return String(str || "")
+      .trim()
+      .replace(/[.,;:!?]+$/, "") // убираем точки, запятые и пр. в конце
+      .replace(/\s+/g, " ") // заменяем двойные пробелы
+      .toLowerCase();
+  }
+
+  function uniqueArray(arr) {
+    const seen = new Set();
+    return arr.filter((item) => {
+      const norm = normalizeText(item);
+      if (seen.has(norm)) return false;
+      seen.add(norm);
+      return true;
+    });
+  }
+
+  // -------------------------------
+  // LocalStorage helpers
   // -------------------------------
   function saveFilters() {
+    if (!selectedFilters) return;
     const values = Array.from(selectedFilters.children).map(
       (chip) => chip.dataset.value
     );
     localStorage.setItem("selectedFilters", JSON.stringify(values));
   }
 
-  // синхронизировать состояния в модалке на основании чипов
-  function syncModalFilters() {
-    if (!modal) return;
-    const selectedValues = Array.from(selectedFilters.children).map(
-      (c) => c.dataset.value
-    );
-    const modalItems = modal.querySelectorAll(".modal__panel li");
-    modalItems.forEach((li) => {
-      const v = li.textContent.trim();
-      if (selectedValues.includes(v)) li.classList.add("selected");
-      else li.classList.remove("selected");
+  // -------------------------------
+  // Универсально: получить вакансии
+  // -------------------------------
+  function getVacancyEntries(company) {
+    const res = [];
+    for (const k in company) {
+      const val = company[k];
+      if (Array.isArray(val)) {
+        val.forEach((item) => {
+          if (item && typeof item === "object") {
+            if ("Вакансии" in item && item["Вакансии"]) {
+              res.push(item["Вакансии"]);
+            } else {
+              res.push(item);
+            }
+          }
+        });
+      }
+    }
+    return res.flat();
+  }
+
+  // -------------------------------
+  // Парсинг "Форма занятости"
+  // -------------------------------
+  function parseEmployment(str) {
+    if (!str) return [];
+    let s = String(str || "");
+    s = s
+      .replace(/Компания\s+практикует[\s\S]*?:/i, "")
+      .replace(/Контент/i, "");
+    return s
+      .split(/[\/,;\n]+/)
+      .map((x) => x.trim())
+      .filter(Boolean);
+  }
+
+  // -------------------------------
+  // Обновление внешнего вида блоков
+  // -------------------------------
+  function updateBlocksState() {
+    document.querySelectorAll(".filters__block").forEach((block) => {
+      const hasActive = Boolean(
+        block.querySelector("li.active") || block.querySelector("li.selected")
+      );
+      block.classList.toggle("has-active", hasActive);
     });
   }
 
-  // создаёт чип (если ещё нет) и синхронизирует модалку
-  function createChip(value) {
+  // -------------------------------
+  // Active/selected по значению
+  // -------------------------------
+  function setActiveStateForValue(value, active) {
     if (!value) return;
-    // предотвращаем дубликаты
-    if ([...selectedFilters.children].some((c) => c.dataset.value === value))
+    const norm = normalizeText(value);
+    document
+      .querySelectorAll(".filters__list li, .modal__panel li")
+      .forEach((li) => {
+        if (normalizeText(li.textContent) === norm) {
+          li.classList.toggle("active", !!active);
+          li.classList.toggle("selected", !!active);
+        }
+      });
+    updateBlocksState();
+  }
+
+  // -------------------------------
+  // Sync modal filters
+  // -------------------------------
+  function syncModalFilters() {
+    if (!selectedFilters) return;
+    const selectedValues = Array.from(selectedFilters.children).map((c) =>
+      normalizeText(c.dataset.value)
+    );
+
+    document
+      .querySelectorAll(".modal__panel li, .filters__list li")
+      .forEach((li) => {
+        li.classList.toggle(
+          "selected",
+          selectedValues.includes(normalizeText(li.textContent))
+        );
+        li.classList.toggle(
+          "active",
+          selectedValues.includes(normalizeText(li.textContent))
+        );
+      });
+
+    updateBlocksState();
+  }
+
+  // -------------------------------
+  // Чипы
+  // -------------------------------
+  function createChip(value) {
+    if (!value || !selectedFilters) return;
+    const norm = normalizeText(value);
+    if (
+      [...selectedFilters.children].some(
+        (c) => normalizeText(c.dataset.value) === norm
+      )
+    )
       return;
 
     const chip = document.createElement("div");
@@ -49,8 +160,7 @@ document.addEventListener("DOMContentLoaded", () => {
     chip.dataset.value = value;
     chip.innerHTML = `${value} <button type="button" aria-label="удалить">×</button>`;
 
-    const btn = chip.querySelector("button");
-    btn.addEventListener("click", () => {
+    chip.querySelector("button").addEventListener("click", () => {
       chip.remove();
       saveFilters();
       applyFilters();
@@ -58,16 +168,20 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     selectedFilters.appendChild(chip);
+    setActiveStateForValue(value, true);
     saveFilters();
     applyFilters();
     syncModalFilters();
   }
 
   function removeChipByValue(value) {
+    if (!selectedFilters) return;
+    const norm = normalizeText(value);
     const chips = Array.from(selectedFilters.children);
-    const found = chips.find((c) => c.dataset.value === value);
+    const found = chips.find((c) => normalizeText(c.dataset.value) === norm);
     if (found) {
       found.remove();
+      setActiveStateForValue(value, false);
       saveFilters();
       applyFilters();
       syncModalFilters();
@@ -75,125 +189,86 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   function restoreFilters() {
+    if (!selectedFilters) return;
     const saved = JSON.parse(localStorage.getItem("selectedFilters") || "[]");
-    saved.forEach((v) => {
-      // используем createChip — она сама синхронизирует
-      createChip(v);
-    });
+    saved.forEach((v) => createChip(v));
+    syncModalFilters();
+    updateBlocksState();
   }
 
   function handleFilterSelection(value, closeAfter = false) {
     if (!value) return;
-    createChip(value);
+    const norm = normalizeText(value);
+    const exists = [...selectedFilters.children].some(
+      (c) => normalizeText(c.dataset.value) === norm
+    );
+    if (exists) removeChipByValue(value);
+    else createChip(value);
     if (closeAfter) closeModal();
   }
 
   // -------------------------------
-  // Modal open/close + sync on open
+  // Modal open/close
   // -------------------------------
-  function openModal(e) {
-    if (e?.preventDefault) e.preventDefault();
-    modal?.classList.add("active");
+  function openModal(tabIndex = 0) {
+    if (!modal) return;
+    modal.classList.add("active");
 
-    if (!document.querySelector(".modal__tab.active") && modalTabs[0]) {
-      modalTabs[0].classList.add("active");
-      const firstPanel = document.getElementById(modalTabs[0].dataset.target);
-      firstPanel?.classList.add("active");
+    modalTabs.forEach((t) => t.classList.remove("active"));
+    modalPanels.forEach((p) => p.classList.remove("active"));
+
+    const idx = Math.max(0, Math.min(tabIndex, modalTabs.length - 1));
+    if (modalTabs[idx]) {
+      modalTabs[idx].classList.add("active");
+      const target = modalTabs[idx].dataset.target;
+      if (target) {
+        const panel = document.getElementById(target);
+        if (panel) panel.classList.add("active");
+      } else {
+        if (modalPanels[idx]) modalPanels[idx].classList.add("active");
+      }
     }
 
-    // синхронизируем отметки при открытии
     syncModalFilters();
   }
 
   function closeModal() {
-    modal?.classList.remove("active");
+    if (!modal) return;
+    modal.classList.remove("active");
   }
 
-  moreLinks.forEach((link) => link.addEventListener("click", openModal));
-  if (allFiltersBtn) allFiltersBtn.addEventListener("click", openModal);
   if (modalClose) modalClose.addEventListener("click", closeModal);
-
-  modal?.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal?.classList.contains("active")) {
-      closeModal();
-    }
-  });
-
-  // -------------------------------
-  // Верхние фильтры (быстрый выбор)
-  // -------------------------------
-  topFilterItems.forEach((item) =>
-    item.addEventListener("click", () =>
-      handleFilterSelection(item.textContent.trim())
-    )
-  );
-
-  // -------------------------------
-  // Внутри модалки: клики по элементам (toggle)
-  // -------------------------------
   if (modal) {
-    const modalPanelItems = modal.querySelectorAll(".modal__panel li");
-    modalPanelItems.forEach((item) => {
-      item.addEventListener("click", () => {
-        const value = item.textContent.trim();
-        const chipExists = [...selectedFilters.children].some(
-          (c) => c.dataset.value === value
-        );
-
-        if (chipExists) {
-          // удаляем чип и снимаем выделение
-          removeChipByValue(value);
-          item.classList.remove("selected");
-        } else {
-          // добавляем чип и помечаем
-          createChip(value);
-          item.classList.add("selected");
-        }
-      });
+    modal.addEventListener("click", (e) => {
+      if (e.target === modal) closeModal();
     });
   }
-
-  // вкладки модалки
-  modalTabs.forEach((tab) => {
-    tab.addEventListener("click", () => {
-      modalTabs.forEach((t) => t.classList.remove("active"));
-      modalPanels.forEach((p) => p.classList.remove("active"));
-      tab.classList.add("active");
-      document.getElementById(tab.dataset.target)?.classList.add("active");
-    });
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal && modal.classList.contains("active"))
+      closeModal();
   });
 
-  restoreFilters();
-
   // -------------------------------
-  // Создание карточки (DOM, чтобы управлять video.play())
+  // Создание карточки компании
   // -------------------------------
   function createCompanyCard(company) {
     const card = document.createElement("div");
     card.classList.add("company-card");
 
+    // логотип / обложка
     const cover = company["Обложка"];
     const logoWrap = document.createElement("div");
     logoWrap.className = "company-card__logo";
-
     if (cover) {
       const lower = String(cover).toLowerCase();
-      // картинка
       if (/\.(jpg|jpeg|png|gif|svg|webp)$/i.test(lower)) {
         const img = document.createElement("img");
         img.src = cover;
         img.alt = "cover";
-        img.style.width = "100%";
-        img.style.height = "100%";
-        img.style.objectFit = "cover";
-        img.style.borderRadius = "12px";
+        img.style.cssText =
+          "width:100%;height:100%;object-fit:cover;border-radius:12px;";
         logoWrap.appendChild(img);
       } else {
-        // всё остальное — видео
         const videoEl = document.createElement("video");
         videoEl.src = cover;
         videoEl.autoplay = true;
@@ -202,22 +277,12 @@ document.addEventListener("DOMContentLoaded", () => {
         videoEl.playsInline = true;
         videoEl.preload = "auto";
         videoEl.controls = false;
-        videoEl.style.width = "100%";
-        videoEl.style.height = "100%";
-        videoEl.style.objectFit = "cover";
-        videoEl.style.borderRadius = "12px";
-        videoEl.style.pointerEvents = "none";
-        // запрещаем контекстное меню
+        videoEl.style.cssText =
+          "width:100%;height:100%;object-fit:cover;border-radius:12px;pointer-events:none;";
         videoEl.addEventListener("contextmenu", (e) => e.preventDefault());
-
         logoWrap.appendChild(videoEl);
-
-        // попыться запустить программно
         const p = videoEl.play();
-        if (p && typeof p.catch === "function")
-          p.catch(() => {
-            /* ignore */
-          });
+        if (p && typeof p.catch === "function") p.catch(() => {});
       }
     }
 
@@ -252,7 +317,9 @@ document.addEventListener("DOMContentLoaded", () => {
     footer.className = "company-card__footer";
     const vacancies = document.createElement("span");
     vacancies.className = "company-card__vacancies";
-    vacancies.textContent = `${company["Вакансии"] || 0} вакансии`;
+    const count = Number(company["Вакансии"]) || 0;
+    vacancies.textContent =
+      count === 0 ? "Нет вакансий" : `${count} ${pluralizeVacancies(count)}`;
 
     const recordId = company.Id ?? company.id ?? company["ID"] ?? "";
     const a = document.createElement("a");
@@ -271,18 +338,29 @@ document.addEventListener("DOMContentLoaded", () => {
 
     return card;
   }
+
+  function pluralizeVacancies(n) {
+    n = Number(n) || 0;
+    const abs = Math.abs(n);
+    const mod100 = abs % 100;
+    const mod10 = abs % 10;
+    if (mod100 >= 11 && mod100 <= 19) return "вакансий";
+    if (mod10 === 1) return "вакансия";
+    if (mod10 >= 2 && mod10 <= 4) return "вакансии";
+    return "вакансий";
+  }
+
   // -------------------------------
-  // Фильтрация + Поиск
-  // ------
+  // Apply filters + search
+  // -------------------------------
   function applyFilters() {
-    const activeFilters = Array.from(selectedFilters.children).map((chip) =>
-      chip.dataset.value.toLowerCase()
+    const activeFilters = Array.from(selectedFilters?.children || []).map(
+      (chip) => normalizeText(chip.dataset.value)
     );
 
     container.innerHTML = "";
     let filteredCompanies = companiesData.slice();
 
-    // фильтрация по чипам
     if (activeFilters.length > 0) {
       filteredCompanies = filteredCompanies.filter((company) => {
         const values = [
@@ -292,16 +370,35 @@ document.addEventListener("DOMContentLoaded", () => {
           company["Направление"],
         ]
           .filter(Boolean)
-          .map((v) => String(v).toLowerCase());
+          .map((v) => normalizeText(v));
 
-        return activeFilters.some((f) => values.some((v) => v.includes(f)));
+        const vacancyEntries = getVacancyEntries(company)
+          .flatMap((vac) =>
+            vac && typeof vac === "object"
+              ? [
+                  vac.Title,
+                  vac.Направление,
+                  vac.Локация,
+                  vac.Регион,
+                  vac["О работе"],
+                  vac["Форма занятости"],
+                ]
+              : [vac]
+          )
+          .filter(Boolean)
+          .map((v) => normalizeText(v));
+
+        return activeFilters.some(
+          (f) =>
+            values.some((v) => v.includes(f)) ||
+            vacancyEntries.some((v) => v.includes(f))
+        );
       });
     }
 
-    // фильтрация по поиску
     if (searchQuery) {
+      const q = normalizeText(searchQuery);
       filteredCompanies = filteredCompanies.filter((company) => {
-        // 1. данные компании
         const companyValues = [
           company["Название компании"],
           company["Сфера"],
@@ -309,29 +406,27 @@ document.addEventListener("DOMContentLoaded", () => {
           company["Направление"],
         ]
           .filter(Boolean)
-          .map((v) => String(v).toLowerCase());
+          .map((v) => normalizeText(v));
 
-        // 2. данные вакансий этой компании
-        let vacancyValues = [];
-        if (Array.isArray(company["_nc_m2m_Uniride_Вакансииs"])) {
-          vacancyValues = company["_nc_m2m_Uniride_Вакансииs"]
-            .map((v) => v["Вакансии"])
-            .filter(Boolean)
-            .flatMap((vac) => [
-              vac.Title,
-              vac.Направление,
-              vac.Локация,
-              vac.Регион,
-              vac["О работе"],
-            ])
-            .filter(Boolean)
-            .map((v) => String(v).toLowerCase());
-        }
+        const vacancyValues = getVacancyEntries(company)
+          .flatMap((vac) =>
+            vac && typeof vac === "object"
+              ? [
+                  vac.Title,
+                  vac.Направление,
+                  vac.Локация,
+                  vac.Регион,
+                  vac["О работе"],
+                  vac["Форма занятости"],
+                ]
+              : [vac]
+          )
+          .filter(Boolean)
+          .map((v) => normalizeText(v));
 
-        // проверяем совпадения в компании или вакансиях
         return (
-          companyValues.some((v) => v.includes(searchQuery)) ||
-          vacancyValues.some((v) => v.includes(searchQuery))
+          companyValues.some((v) => v.includes(q)) ||
+          vacancyValues.some((v) => v.includes(q))
         );
       });
     }
@@ -346,12 +441,11 @@ document.addEventListener("DOMContentLoaded", () => {
     filteredCompanies.forEach((company) =>
       container.appendChild(createCompanyCard(company))
     );
-
     syncModalFilters();
   }
 
   // -------------------------------
-  // Поиск
+  // Search input
   // -------------------------------
   if (searchInput) {
     searchInput.addEventListener("input", (e) => {
@@ -361,7 +455,108 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   // -------------------------------
-  // Загрузка компаний
+  // Render filters (no duplicates)
+  // -------------------------------
+  function renderFilters() {
+    const sets = {
+      sphere: new Set(),
+      directions: new Set(),
+      employment: new Set(),
+      region: new Set(),
+    };
+
+    companiesData.forEach((company) => {
+      if (company["Сфера"]) sets.sphere.add(String(company["Сфера"]).trim());
+
+      if (company["Локация"]) {
+        const country = String(company["Локация"]).split(",")[0].trim();
+        if (country) sets.region.add(country);
+      }
+
+      if (company["Форма занятости"]) {
+        parseEmployment(company["Форма занятости"]).forEach(
+          (v) => v && sets.employment.add(v)
+        );
+      }
+
+      getVacancyEntries(company).forEach((vac) => {
+        if (!vac || typeof vac !== "object") return;
+        if (vac["Направление"])
+          sets.directions.add(String(vac["Направление"]).trim());
+        if (vac["Регион"]) sets.region.add(String(vac["Регион"]).trim());
+        if (vac["Локация"]) {
+          const country = String(vac["Локация"]).split(",")[0].trim();
+          if (country) sets.region.add(country);
+        }
+        if (vac["Форма занятости"]) {
+          parseEmployment(vac["Форма занятости"]).forEach(
+            (v) => v && sets.employment.add(v)
+          );
+        }
+      });
+    });
+
+    const panelsMap = {
+      sphere: document.getElementById("sphere"),
+      directions: document.getElementById("directions"),
+      employment: document.getElementById("employment"),
+      region: document.getElementById("region"),
+    };
+
+    Object.entries(panelsMap).forEach(([key, panel]) => {
+      if (!panel) return;
+      const ul = panel.querySelector("ul");
+      if (!ul) return;
+
+      const fixed = Array.from(ul.querySelectorAll("li")).map((li) =>
+        li.textContent.trim()
+      );
+
+      ul.innerHTML = "";
+
+      fixed.forEach((val) => {
+        if (!val) return;
+        const li = document.createElement("li");
+        li.textContent = val;
+        li.classList.add("_fixed");
+        li.addEventListener("click", () => handleFilterSelection(val));
+        ul.appendChild(li);
+      });
+
+      const values = uniqueArray(Array.from(sets[key] || [])).filter(
+        (v) => !fixed.some((f) => normalizeText(f) === normalizeText(v))
+      );
+      values.sort((a, b) => a.localeCompare(b, "ru"));
+
+      values.forEach((val) => {
+        const li = document.createElement("li");
+        li.textContent = val;
+        li.addEventListener("click", () => handleFilterSelection(val));
+        ul.appendChild(li);
+      });
+    });
+
+    topFilterItems = document.querySelectorAll(".filters__list li");
+    topFilterItems.forEach((li) => {
+      li.removeEventListener("click", topFilterClickHandler);
+      li.addEventListener("click", topFilterClickHandler);
+    });
+
+    syncModalFilters();
+    updateBlocksState();
+  }
+
+  function topFilterClickHandler(e) {
+    const value = e.currentTarget.textContent.trim();
+    const chipExists = [...selectedFilters.children].some(
+      (c) => normalizeText(c.dataset.value) === normalizeText(value)
+    );
+    if (chipExists) removeChipByValue(value);
+    else createChip(value);
+  }
+
+  // -------------------------------
+  // Load companies
   // -------------------------------
   async function loadCompanies() {
     try {
@@ -379,91 +574,56 @@ document.addEventListener("DOMContentLoaded", () => {
         (c) => c["Активация страницы"] !== false
       );
 
+      renderFilters();
       applyFilters();
     } catch (err) {
       console.error("Ошибка загрузки:", err);
-      container.innerHTML = `<p class="error">Не удалось загрузить данные</p>`;
+      if (container)
+        container.innerHTML = `<p class="error">Не удалось загрузить данные</p>`;
     }
   }
 
-  if (container) loadCompanies();
-});
-document.addEventListener("DOMContentLoaded", () => {
-  const modal = document.getElementById("filtersModal");
-  const modalClose = document.querySelector(".modal__close");
-  const modalTabs = document.querySelectorAll(".modal__tab");
-  const modalPanels = document.querySelectorAll(".modal__panel");
-
-  // -------------------------------
-  // Открыть / закрыть модалку
-  // -------------------------------
-  function openModal() {
-    modal?.classList.add("active");
-
-    // если нет активной вкладки — включаем первую
-    if (!document.querySelector(".modal__tab.active") && modalTabs[0]) {
-      modalTabs[0].classList.add("active");
-      document
-        .getElementById(modalTabs[0].dataset.target)
-        ?.classList.add("active");
-    }
+  function bindModalStaticListeners() {
+    modalTabs.forEach((tab, index) =>
+      tab.addEventListener("click", () => openModal(index))
+    );
   }
 
-  function closeModal() {
-    modal?.classList.remove("active");
-  }
-
-  if (modalClose) modalClose.addEventListener("click", closeModal);
-
-  modal?.addEventListener("click", (e) => {
-    if (e.target === modal) closeModal();
-  });
-
-  document.addEventListener("keydown", (e) => {
-    if (e.key === "Escape" && modal?.classList.contains("active")) {
-      closeModal();
-    }
-  });
-
-  // -------------------------------
-  // Мобильные кнопки
-  // -------------------------------
-  const mobileFilterButtons = document.querySelectorAll(".mobile-filter__item");
-  const allFiltersBtn = document.querySelector(".mobile-filter__all");
-
-  mobileFilterButtons.forEach((btn, index) => {
-    btn.addEventListener("click", (e) => {
+  moreLinks.forEach((link, index) => {
+    link.addEventListener("click", (e) => {
       e.preventDefault();
-      openModal();
-
-      // выключаем все вкладки и панели
-      modalTabs.forEach((t) => t.classList.remove("active"));
-      modalPanels.forEach((p) => p.classList.remove("active"));
-
-      // активируем вкладку с таким же индексом
-      if (modalTabs[index]) {
-        modalTabs[index].classList.add("active");
-        document
-          .getElementById(modalTabs[index].dataset.target)
-          ?.classList.add("active");
-      }
+      openModal(index);
     });
   });
 
   if (allFiltersBtn) {
     allFiltersBtn.addEventListener("click", (e) => {
       e.preventDefault();
-      openModal();
-
-      // сброс, активируем первую вкладку
-      modalTabs.forEach((t) => t.classList.remove("active"));
-      modalPanels.forEach((p) => p.classList.remove("active"));
-      if (modalTabs[0]) {
-        modalTabs[0].classList.add("active");
-        document
-          .getElementById(modalTabs[0].dataset.target)
-          ?.classList.add("active");
-      }
+      openModal(0);
     });
   }
+
+  filterTitles.forEach((title, index) => {
+    title.addEventListener("click", (e) => {
+      e.preventDefault();
+      openModal(index);
+    });
+  });
+
+  mobileFilterButtons.forEach((btn, index) => {
+    btn.addEventListener("click", (e) => {
+      e.preventDefault();
+      openModal(index);
+    });
+  });
+  if (mobileAllFilters) {
+    mobileAllFilters.addEventListener("click", (e) => {
+      e.preventDefault();
+      openModal(0);
+    });
+  }
+
+  restoreFilters();
+  bindModalStaticListeners();
+  if (container) loadCompanies();
 });

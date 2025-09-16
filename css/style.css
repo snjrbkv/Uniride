@@ -1,7 +1,5 @@
-@font-face {
-  font-family: "Inter";
-  src: url(../fonts/Inter_24pt-Regular.ttf) format("truetype");
-}
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap");
+
 * {
   margin: 0;
   padding: 0;
@@ -134,7 +132,7 @@ nav,
   color: #191919;
 }
 .selected-filters {
-  margin-top: 160px;
+  margin-top: 80px;
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
@@ -193,8 +191,8 @@ nav,
 .cards {
   display: flex;
   align-items: flex-start;
+  justify-content: space-between;
   flex-wrap: wrap;
-  padding: 33px 0;
   gap: 20px;
 }
 .cards .notfound {
@@ -211,14 +209,58 @@ nav,
     letter-spacing: -5%;
     color: #191919;
   }
+} /* base */
+.filters__list li {
+  color: #030303;
+  cursor: pointer;
+  transition: color 0.2s;
 }
+
+/* при наведении на список — делаем все элементы серыми */
+.filters__list:hover li {
+  color: #b1b1b1;
+}
+
+/* но тот <li>, на который навели курсор, остаётся чёрным */
+.filters__list:hover li:hover {
+  color: #030303;
+}
+
+/* активный элемент всегда чёрный */
+.filters__list li.active {
+  color: #030303;
+}
+
+/* если в колонке есть актив — по умолчанию все серые */
+.filters__block.has-active .filters__list li {
+  color: #b1b1b1;
+}
+
+/* активный остаётся чёрным даже в has-active */
+.filters__block.has-active .filters__list li.active {
+  color: #030303;
+}
+
+/* и при наведении внутри has-active — наведённый элемент становится чёрным */
+.filters__block.has-active .filters__list:hover li:hover {
+  color: #030303;
+}
+
+/* вариант: не трогаем .active при hover (короче) */
+.filters__list:hover li:not(.active) {
+  color: #b1b1b1;
+}
+.filters__list:hover li:not(.active):hover {
+  color: #030303;
+}
+
 /* Карточка */
 .company-card {
   width: 32%;
-  height: 620px;
+  height: auto;
   background: #f7f7f7;
   border-radius: 50px;
-  padding: 40px;
+  padding: 38px;
   display: flex;
   flex-direction: column;
   align-items: stretch;
@@ -229,7 +271,7 @@ nav,
   border-radius: 60px;
   width: 100%;
   height: 230px;
-  margin-bottom: 12px;
+  margin-bottom: 20px;
   img {
     width: 100%;
     height: 100%;
@@ -252,15 +294,14 @@ nav,
 }
 /* Иконка компании (слева) */
 .company-card__icon {
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
   border-radius: 50% !important;
   background: #b1b1b1;
   display: flex;
   justify-content: center;
   align-items: center;
   font-weight: bold;
-  margin-bottom: 8px;
   img {
     width: 100%;
     height: 100%;
@@ -299,7 +340,7 @@ nav,
 }
 .company-card__field img,
 .company-card__location img {
-  width: 26px;
+  width: 20px;
   height: 100%;
   display: block;
 }
@@ -310,7 +351,7 @@ nav,
 
 /* Нижний блок */
 .company-card__footer {
-  margin-top: auto;
+  margin-top: 20px;
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -364,6 +405,7 @@ nav,
 .modal.active {
   display: flex;
 }
+
 .modal__content {
   background: #191919;
   padding: 50px;
@@ -464,14 +506,14 @@ nav,
   align-items: flex-start;
   justify-content: space-between;
   gap: 20px;
-  margin-top: 33px;
+  margin: 33px 0;
   font-family: sans-serif;
   display: none;
 }
 
 .mobile-filter__list {
   display: flex;
-  gap: 24px;
+  gap: 7px;
   flex-wrap: wrap;
   flex-direction: column;
   justify-content: flex-start;
@@ -537,11 +579,15 @@ nav,
   .company-card {
     width: 48%;
   }
+
+  .selected-filters {
+    margin-bottom: 33px;
+  }
 }
 @media only screen and (max-width: 840px) {
   .company-card {
     height: 525px;
-    padding: 10px;
+    padding: 25px;
     border-radius: 20px;
   }
   .nav--list {
@@ -589,16 +635,42 @@ nav,
   }
   .selected-filters__all {
     display: none;
+
+    margin-top: 0px !important;
+    margin-bottom: 33px;
   }
   .mobile-filter {
     display: flex;
   }
+
+  .selected-filters {
+    margin-top: 0px !important;
+    margin-bottom: 33px;
+  }
+  .company-card__logo {
+    height: 230px;
+  }
+  .company-card__footer {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .search--icon {
+    width: 24px;
+    height: 24px;
+    left: 0% !important;
+  }
 }
 @media only screen and (max-width: 640px) {
+  .selected-filters {
+    margin-top: 0px;
+    margin-bottom: 25px;
+  }
   .search--input {
     padding: 0 10%;
   }
-  .company-card {
+  /* .company-card {
     width: 280px;
     height: 140px;
     border-radius: 30px !important;
@@ -621,7 +693,7 @@ nav,
   .company-card__logo {
     height: 150px;
     border-radius: 20px;
-  }
+  } */
   .modal__layout {
     flex-direction: column;
   }
@@ -633,6 +705,21 @@ nav,
   .modal__body {
     width: 100%;
     padding-left: 0;
+  }
+
+  .company-card__logo {
+    height: 146px;
+    width: 100%;
+  }
+  .company-card__icon {
+    width: 50px;
+    height: 50px;
+  }
+
+  .search--icon {
+    width: 24px;
+    height: 24px;
+    left: 4%;
   }
 }
 @media only screen and (max-width: 530px) {
@@ -667,6 +754,12 @@ nav,
     width: 80%;
     padding: 20px;
   }
+
+  .search--icon {
+    width: 24px;
+    height: 24px;
+    left: 3.5%;
+  }
 }
 @media only screen and (max-width: 360px) {
   .logo {
@@ -690,6 +783,7 @@ nav,
   .search--icon {
     width: 24px;
     height: 24px;
+    left: 3%;
   }
   .search--input {
     padding: 0 12%;
