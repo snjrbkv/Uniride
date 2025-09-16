@@ -1,218 +1,192 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Document</title>
+    <title>Компания</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        text-decoration: none;
+        list-style: none;
+        box-sizing: border-box;
+        font-family: "Inter", sans-serif;
+      }
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        padding: 1%;
+      }
+      .block {
+        width: 100%;
+        height: auto;
+        padding: 40px;
+        border-radius: 30px;
+        background: #f1f1f1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        margin-bottom: 24px;
+      }
+      .block__title {
+        font-weight: 600;
+        font-size: 28px;
+        color: #191919;
+      }
+      .requestes {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        margin-top: 20px;
+        gap: 15px;
+        margin-bottom: 40px;
+        flex-wrap: wrap;
+      }
+      .requestes div {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        font-weight: 500;
+        font-size: 16px;
+        color: #8c8c8c;
+        background-color: #fff;
+        padding: 10px 15px;
+        border-radius: 10px;
+      }
+      .requestes__btn {
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        flex-wrap: wrap;
+      }
+      .btn__requestes {
+        padding: 15px 30px;
+        border-radius: 500px;
+        border: none;
+        background: #994cff;
+        font-weight: 500;
+        font-size: 16px;
+        color: #fff;
+        cursor: pointer;
+      }
+      .btn__connect {
+        padding: 15px 30px;
+        font-weight: 600;
+        font-size: 16px;
+        border: none;
+        border-bottom: 1px solid #363636;
+        background: none;
+        cursor: pointer;
+      }
+      @media only screen and (max-width: 640px) {
+        .btn__requestes,
+        .btn__connect {
+          font-size: 14px;
+          width: 100%;
+        }
+        .btn__connect {
+          border: 1px solid #bfbfbf;
+          border-radius: 500px;
+        }
+      }
+    </style>
   </head>
   <body>
     <div class="container">
-      <div class="block">
-        <h1 class="block__title">Менеджер по продажам</h1>
-        <div class="requestes">
-          <div class="location">
-            <img src="company-images/Vector.svg" alt="location" />
-            Россия, Санкт-Петербург
-          </div>
-          <div class="time">
-            <img src="company-images/time.png" alt="time" />
-            Полная занятость
-          </div>
-          <div class="type_work">
-            <img src="company-images/type_work.png" alt="type_work" />
-            Удаленная работа
-          </div>
-          <div class="deta">
-            <img src="company-images/data.png" alt="deta" />
-            25.08.2025
-          </div>
-        </div>
-        <div class="requestes__btn">
-          <button class="btn btn__requestes">Подробнее</button>
-          <button class="btn btn__connect">Связаться с HR</button>
-        </div>
-      </div>
-      <div class="block">
-        <h1 class="block__title">Менеджер по продажам</h1>
-        <div class="requestes">
-          <div class="location">
-            <img src="company-images/Vector.svg" alt="location" />
-            Россия, Санкт-Петербург
-          </div>
-          <div class="time">
-            <img src="company-images/time.png" alt="time" />
-            Полная занятость
-          </div>
-          <div class="type_work">
-            <img src="company-images/type_work.png" alt="type_work" />
-            Удаленная работа
-          </div>
-          <div class="deta">
-            <img src="company-images/data.png" alt="deta" />
-            25.08.2025
-          </div>
-        </div>
-        <div class="requestes__btn">
-          <button class="btn btn__requestes">Подробнее</button>
-          <button class="btn btn__connect">Связаться с HR</button>
-        </div>
-      </div>
+      <p>Загрузка данных...</p>
     </div>
-  </body>
-  <style>
-    * {
-      margin: 0;
-      padding: 0;
-      text-decoration: none;
-      list-style: none;
-      box-sizing: border-box;
-      font-family: "Inter", sans-serif;
-    }
-    .container {
-      max-width: 1400px;
-      margin: 0 auto;
-      padding: 1%;
-    }
-    .block {
-      width: 100%;
-      height: auto;
-      padding: 50px;
-      border-radius: 50px;
-      background: #f1f1f1;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      margin-bottom: 24px;
-    }
-    .block__title {
-      font-weight: 600;
-      font-style: Semi Bold;
-      font-size: 35px;
-      leading-trim: NONE;
-      line-height: 101%;
-      letter-spacing: -5%;
-      color: #191919;
-    }
-    .requestes {
-      display: flex;
-      align-items: center;
-      margin-top: 40px;
-      gap: 20px;
-      margin-bottom: 80px;
-      flex-wrap: wrap;
-    }
-    .requestes div {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-      font-weight: 600;
-      font-style: Semi Bold;
-      font-size: 25px;
-      leading-trim: NONE;
-      line-height: 136%;
-      letter-spacing: -4%;
 
-      color: #8c8c8c;
-      background-color: #fff;
-      padding: 15px 20px;
-      border-radius: 10px;
-    }
-    .requestes__btn {
-      display: flex;
-      align-items: center;
-      gap: 20px;
-    }
-    .btn__requestes {
-      width: 323px;
-      height: 67px;
-      gap: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      border-radius: 500px;
-      border: none;
-      background: #994cff;
-      font-weight: 500;
-      font-style: Medium;
-      font-size: 20px;
-      leading-trim: NONE;
-      line-height: 101%;
-      letter-spacing: -5%;
-      color: #fff;
-    }
-    .btn__connect {
-      width: 323px;
-      height: 44px;
-      font-weight: 600;
-      font-style: Semi Bold;
-      font-size: 20px;
-      leading-trim: NONE;
-      line-height: 101%;
-      letter-spacing: -5%;
-      border: none;
-      border-bottom: 1px solid #363636;
-    }
-    @media only screen and (max-width: 1100px) {
-      .block__title {
-        font-weight: 600;
-        font-style: Semi Bold;
-        font-size: 35px;
-        leading-trim: NONE;
-        line-height: 101%;
-        letter-spacing: -5%;
-      }
-      .requestes {
-        margin-bottom: 40px;
-      }
-    }
-    @media only screen and (max-width: 840px) {
-      .requestes {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .requestes div {
-        width: 75%;
-      }
-    }
-    @media only screen and (max-width: 640px) {
-      .requestes div {
-        width: 100%;
-      }
-      .btn__requestes,
-      .btn__connect {
-        font-size: 20px;
-        height: 67px;
-        width: 50%;
-      }
-      .btn__connect {
-        border: 1px solid #bfbfbf;
-        border-radius: 500px;
-      }
-    }
-    @media only screen and (max-width: 520px) {
-      .block__title {
-        font-size: 25px;
-        width: 100%;
-      }
-      .block {
-        padding: 25px;
-      }
-      .requestes div {
-        font-size: 15px;
-        img {
-          width: 20px;
-          height: auto;
-          object-fit: cover;
+    <script>
+      async function loadCompanyData() {
+        try {
+          const urlParams = new URLSearchParams(window.location.search);
+          const companyId = parseInt(urlParams.get("id"));
+
+          // грузим с твоего сервера
+          const response = await fetch(
+            "https://bd.uniride.io/data/table_records.txt"
+          );
+          const json = await response.json();
+          const companies = json.list;
+
+          const company = companies.find((c) => c.Id === companyId);
+
+          const container = document.querySelector(".container");
+          container.innerHTML = ""; // очистим "Загрузка данных..."
+
+          if (!company) {
+            container.innerHTML = "<p>Компания не найдена</p>";
+            return;
+          }
+
+          // проходим по вакансиям компании
+          if (
+            company._nc_m2m_Uniride_Вакансииs &&
+            company._nc_m2m_Uniride_Вакансииs.length > 0
+          ) {
+            company._nc_m2m_Uniride_Вакансииs.forEach((v) => {
+              const vac = v.Вакансии;
+
+              // дата только yyyy-mm-dd
+              let datePub = "-";
+              if (vac.CreatedAt) {
+                const d = new Date(vac.CreatedAt);
+                if (!isNaN(d)) {
+                  datePub = d.toISOString().split("T")[0];
+                }
+              }
+
+              // блок вакансии
+              const block = document.createElement("div");
+              block.classList.add("block");
+              block.innerHTML = `
+            <h1 class="block__title">${
+              vac["Название вакансии"] || "Без названия"
+            }</h1>
+         <div class="requestes">
+  <div>
+    <img src="company-images/Vector.svg" alt="location" />
+    ${vac["Локация"] || "-"}
+  </div>
+  <div>
+    <img src="company-images/time.png" alt="time" />
+    ${vac["Форма занятости"] || "-"}
+  </div>
+  <div>
+    <img src="company-images/type_work.png" alt="salary" />
+    ${vac["Ставка"] || "-"}
+  </div>
+  <div>
+    <img src="company-images/data.png" alt="date" />
+    ${datePub}
+  </div>
+</div>
+
+            <div class="requestes__btn">
+              <button class="btn__requestes">Подробнее</button>
+              ${
+                vac["Откликнуться (ссылка на контакт)"]
+                  ? `<a href="${vac["Откликнуться (ссылка на контакт)"]}" target="_blank">
+                       <button class="btn__connect">Связаться с HR</button>
+                     </a>`
+                  : `<button class="btn__connect" disabled>Контактов нет</button>`
+              }
+            </div>
+          `;
+              container.appendChild(block);
+            });
+          } else {
+            container.innerHTML = "<p>У компании нет вакансий</p>";
+          }
+        } catch (error) {
+          console.error("Ошибка загрузки данных:", error);
+          document.querySelector(".container").innerHTML =
+            "<p>Ошибка загрузки данных</p>";
         }
       }
-      .requestes__btn {
-        flex-direction: column;
-        align-items: center;
-        gap: 20px;
-        button {
-          width: 100%;
-        }
-      }
-    }
-  </style>
+
+      window.onload = loadCompanyData;
+    </script>
+  </body>
 </html>
